@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ club_name }} Runs - Strava Board</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include "navbar.html" %}
+    <h1 class="club-title">{{ club_name }}</h1>
+    
+    {% for month in monthly_runs|reverse %}
+        <h2 class="week-header">
+            {{ month.month | datetime('%B') }}
+        </h2>
+        <table class="week-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Duration</th>
+                    <th>Distance (km)</th>
+                    <th>Pace (min/km)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for run in month.runs %}
+                <tr>
+                    <td>{{ run.start_date_local.strftime('%d/%m %H:%M') }}</td>
+                    <td>{{ run.name }}</td>
+                    <td>{{ run.format_duration() }}</td>
+                    <td>{{ "%.2f"|format(run.distance/1000) }}</td>
+                    <td>{{ run.format_pace() }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+</body>
+</html>

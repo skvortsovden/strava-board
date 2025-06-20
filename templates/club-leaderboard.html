@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ club_name }} Leaderboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include "navbar.html" %}
+    <h1 class="club-title">{{ club_name }}</h1>
+    <div class="leaderboard-container">
+    </div>
+</body>
+</html>
