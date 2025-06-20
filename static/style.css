@@ -249,3 +249,13 @@ blockquote {
     background: #3a7fd6;
     color: #fff;
 }
+
+.runner-cell {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+.runner-cell img {
+    margin-right: 8px;
+    flex-shrink: 0;
+}
