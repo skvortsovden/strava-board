@@ -18,7 +18,11 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
 
 # Configure PostgreSQL (works with Render's DATABASE_URL)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///local.db')
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///local.db')
+# Fix postgres:// to postgresql:// for SQLAlchemy compatibility
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
@@ -260,11 +264,6 @@ def callback():
     
     except Exception as e:
         return f"Callback error: {str(e)}", 500
-    activities = fetch_activities(access_token, after_date)
-    if activities:
-        store_runs(user, activities)
-
-    return redirect('/')
 
 @app.route('/club/<club_slug>')
 @login_required
