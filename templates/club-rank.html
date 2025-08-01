@@ -13,14 +13,14 @@
         
         {% for month_group in rank_data %}
             <div class="table-container">
-                <h2 class="section-header">{{ month_group.month | datetime('%B %Y') }}</h2>
+                <h2 class="section-header">{{ month_group.month | datetime('%B') }}</h2>
                 <div class="table-responsive">
                     <table class="stats-table club-rank-table">
                         <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Runner</th>
-                                <th class="mobile-hide">Run Days</th>
+                                <th class="mobile-hide">Days</th>
                                 <th>Runs</th>
                                 <th>Dist</th>
                                 <th class="mobile-hide">Time</th>
