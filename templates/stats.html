@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Running Stats - Strava Board</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    
+    <div class="container">
+        <h1>📊 My Running Statistics</h1>
+        
+        {% if not authorized %}
+            <p>Please <a href="/login">login with Strava</a> to see your statistics.</p>
+        {% elif not stats %}
+            <p>No running data found. Start running and sync your activities!</p>
+        {% else %}
+            <!-- All-Time Statistics -->
+            <div class="stats-section">
+                <h2>🏃‍♂️ All-Time Statistics</h2>
+                <table class="stats-table">
+                    <tr>
+                        <td><strong>Total Runs</strong></td>
+                        <td>{{ stats.total_runs }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total Days Running</strong></td>
+                        <td>{{ stats.total_days_running }} days</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total Distance</strong></td>
+                        <td>{{ stats.total_kilometers }} km</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total Time Running</strong></td>
+                        <td>{{ stats.total_hours }} hours</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Longest Run</strong></td>
+                        <td>{{ stats.longest_distance }} km<br><small>({{ stats.longest_run_name }})</small></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Longest Streak</strong></td>
+                        <td>{{ stats.longest_streak }} days in a row</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Current Year Statistics -->
+            <div class="stats-section">
+                <h2>📅 {{ stats.current_year }} Statistics</h2>
+                <table class="stats-table">
+                    <tr>
+                        <td><strong>Runs This Year</strong></td>
+                        <td>{{ stats.current_year_runs }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Distance This Year</strong></td>
+                        <td>{{ stats.current_year_kilometers }} km</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Time This Year</strong></td>
+                        <td>{{ stats.current_year_hours }} hours</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Quick Stats Cards -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <h3>🏃‍♂️</h3>
+                    <p class="stat-number">{{ stats.total_runs }}</p>
+                    <p class="stat-label">Total Runs</p>
+                </div>
+                <div class="stat-card">
+                    <h3>📍</h3>
+                    <p class="stat-number">{{ stats.total_kilometers }}</p>
+                    <p class="stat-label">Kilometers</p>
+                </div>
+                <div class="stat-card">
+                    <h3>⏰</h3>
+                    <p class="stat-number">{{ stats.total_hours }}</p>
+                    <p class="stat-label">Hours</p>
+                </div>
+                <div class="stat-card">
+                    <h3>🔥</h3>
+                    <p class="stat-number">{{ stats.longest_streak }}</p>
+                    <p class="stat-label">Longest Streak</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

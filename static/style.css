@@ -259,3 +259,74 @@ blockquote {
     margin-right: 8px;
     flex-shrink: 0;
 }
+
+/* Stats page styles */
+.stats-section {
+    margin-bottom: 2rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.stats-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+
+.stats-table td:first-child {
+    font-weight: 600;
+    color: #666;
+    width: 40%;
+}
+
+.stats-table td:last-child {
+    text-align: right;
+    font-weight: 600;
+    color: #fc4c02;
+}
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card h3 {
+    font-size: 2rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fc4c02;
+    margin: 0;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0.25rem 0 0 0;
+    font-weight: 600;
+}

@@ -315,6 +315,86 @@ def leaderboards():
         my_clubs=my_clubs
     )
 
+@app.route('/stats')
+@login_required
+def stats():
+    user_id = session.get('user_id')
+    if not user_id:
+        return render_template('stats.html', authorized=False)
+    
+    runs = Run.query.filter_by(user_id=user_id).order_by(Run.start_date_local).all()
+    
+    if not runs:
+        return render_template('stats.html', authorized=True, stats=None)
+    
+    # Calculate statistics
+    total_runs = len(runs)
+    
+    # Total unique days running
+    unique_days = set(r.start_date_local.date() for r in runs if r.start_date_local)
+    total_days_running = len(unique_days)
+    
+    # Total distance in kilometers
+    total_kilometers = sum(r.distance or 0 for r in runs) / 1000
+    
+    # Total time in hours
+    total_seconds = sum(r.moving_time or 0 for r in runs)
+    total_hours = total_seconds / 3600
+    
+    # Longest run by distance
+    longest_run = max(runs, key=lambda r: r.distance or 0)
+    longest_distance = (longest_run.distance or 0) / 1000
+    
+    # Calculate longest streak
+    longest_streak = calculate_longest_streak(runs)
+    
+    # Current year stats
+    current_year = get_current_year()
+    current_year_runs = [r for r in runs if r.start_date_local and r.start_date_local.year == current_year]
+    current_year_total_runs = len(current_year_runs)
+    current_year_kilometers = sum(r.distance or 0 for r in current_year_runs) / 1000
+    current_year_hours = sum(r.moving_time or 0 for r in current_year_runs) / 3600
+    
+    stats = {
+        'total_runs': total_runs,
+        'total_days_running': total_days_running,
+        'total_kilometers': round(total_kilometers, 1),
+        'total_hours': round(total_hours, 1),
+        'longest_distance': round(longest_distance, 1),
+        'longest_run_name': longest_run.name,
+        'longest_streak': longest_streak,
+        'current_year': current_year,
+        'current_year_runs': current_year_total_runs,
+        'current_year_kilometers': round(current_year_kilometers, 1),
+        'current_year_hours': round(current_year_hours, 1)
+    }
+    
+    return render_template('stats.html', authorized=True, stats=stats)
+
+def calculate_longest_streak(runs):
+    """Calculate the longest streak of consecutive days running"""
+    if not runs:
+        return 0
+    
+    # Get unique run dates sorted
+    run_dates = sorted(set(r.start_date_local.date() for r in runs if r.start_date_local))
+    
+    if not run_dates:
+        return 0
+    
+    longest_streak = 1
+    current_streak = 1
+    
+    for i in range(1, len(run_dates)):
+        # Check if dates are consecutive
+        if (run_dates[i] - run_dates[i-1]).days == 1:
+            current_streak += 1
+            longest_streak = max(longest_streak, current_streak)
+        else:
+            current_streak = 1
+    
+    return longest_streak
+
 @app.route('/<club_slug>/leaderboard')
 @login_required
 def club_leaderboard(club_slug):
