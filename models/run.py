@@ -54,3 +54,25 @@ class Run(db.Model):
                 if start <= run_time <= end:
                     self.club_name = club_name
                     break
+
+def get_user_runs(user_id):
+    runs_ref = db.collection('runs')
+    docs = runs_ref.where('user_id', '==', user_id).stream()
+    return [doc.to_dict() for doc in docs]
+
+def get_club_runs(club_name, year):
+    runs_ref = db.collection('runs')
+    docs = runs_ref.where('club_name', '==', club_name).stream()
+    runs = []
+    for doc in docs:
+        run = doc.to_dict()
+        # Filter by year in Python, since Firestore can't filter on computed fields
+        if 'start_date_local' in run:
+            dt = run['start_date_local']
+            # dt should be a Firestore timestamp or ISO string; convert as needed
+            if isinstance(dt, str):
+                from datetime import datetime
+                dt = datetime.fromisoformat(dt)
+            if dt.year == year:
+                runs.append(run)
+    return runs

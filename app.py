@@ -3,23 +3,23 @@ from flask import Flask, redirect, request, session, render_template, url_for
 from datetime import datetime, timedelta
 import pytz
 import requests
-from config import STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET, STRAVA_REDIRECT_URI, SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS
+from config import STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET, STRAVA_REDIRECT_URI
 from dotenv import load_dotenv
 from models.activity import Activity
 from models.run import Run
 from models import db
 from models.user import User
 from functools import wraps
-from sqlalchemy import func, extract
 from collections import defaultdict
+from sqlalchemy import extract
 
 load_dotenv()
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
 
-# --- Database ---
-app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
+# Configure PostgreSQL (works with Render's DATABASE_URL)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///local.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
 
@@ -143,7 +143,7 @@ def store_runs(user, activities):
                 start_date=activity.start_date,
                 start_date_local=activity.start_date_local,
                 distance=activity.distance,
-                moving_time=activity.moving_time,
+                duration=activity.moving_time,
                 club_name=activity.club_name,
                 raw_json=act
             )
@@ -153,7 +153,7 @@ def store_runs(user, activities):
             run.start_date = activity.start_date
             run.start_date_local = activity.start_date_local
             run.distance = activity.distance
-            run.moving_time = activity.moving_time
+            run.duration = activity.moving_time
             run.club_name = activity.club_name
             run.raw_json = act
     db.session.commit()
@@ -166,7 +166,9 @@ def index():
     user_id = session.get('user_id')
     if not access_token or not user_id:
         return render_template('index.html', authorized=False)
+    
     user = User.query.get(user_id)
+    # Use PostgreSQL query instead of Firestore
     runs = Run.query.filter_by(user_id=user.id).order_by(Run.start_date).all()
     week_ranges = get_year_week_ranges()
     weekly_runs = group_runs_by_week(runs, week_ranges)
@@ -298,6 +300,7 @@ def leaderboards():
 @app.route('/<club_slug>/leaderboard')
 @login_required
 def club_leaderboard(club_slug):
+    from sqlalchemy import extract
     club_name = slug_to_name(club_slug)
     current_year = get_current_year()
     # Query all runs for this club
@@ -324,7 +327,7 @@ def club_leaderboard(club_slug):
         for month, user_runs in months.items():
             total_runs = len(user_runs)
             total_km = sum(r.distance or 0 for r in user_runs) / 1000
-            total_time = sum(r.moving_time or 0 for r in user_runs)
+            total_time = sum(r.duration or 0 for r in user_runs)
             avg_pace = (
                 (total_time / 60) / total_km if total_km > 0 else 0
             )  # min/km
@@ -354,7 +357,7 @@ def club_leaderboard(club_slug):
             run_days = set(r.start_date_local.date() for r in runs_list if r.start_date_local)
             total_run_days = len(run_days)
             total_km = sum(r.distance or 0 for r in runs_list) / 1000
-            total_time = sum(r.moving_time or 0 for r in runs_list)
+            total_time = sum(r.duration or 0 for r in runs_list)
             avg_pace = (total_time / 60) / total_km if total_km > 0 else 0
             rows.append({
                 'runner': user,
@@ -385,10 +388,7 @@ def format_datetime(value, fmt='%B %Y'):
     from datetime import datetime
     return datetime.strptime(value, '%Y-%m').strftime(fmt)
 
-with app.app_context():
-    for run in Run.query.all():
-        run.detect_club_run()
-    db.session.commit()
-
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()  # Create tables if they don't exist
     app.run(debug=True, host='0.0.0.0', port=5555)
