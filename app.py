@@ -3,7 +3,7 @@ from flask import Flask, redirect, request, session, render_template, url_for
 from datetime import datetime, timedelta
 import pytz
 import requests
-from config import STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET, STRAVA_REDIRECT_URI
+from config import STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET, STRAVA_REDIRECT_URI, CLUB_CONFIGS
 from dotenv import load_dotenv
 from models.activity import Activity
 from models.run import Run
@@ -35,6 +35,101 @@ with app.app_context():
 
 
 # --- Utility Functions ---
+
+def refresh_access_token(user):
+    """Refresh access token if expired"""
+    try:
+        if user.token_expires_at and datetime.utcnow() < user.token_expires_at:
+            return user.access_token  # Token still valid
+        
+        if not user.refresh_token:
+            return None  # No refresh token available
+        
+        # Request new access token
+        token_res = requests.post("https://www.strava.com/oauth/token", data={
+            'client_id': STRAVA_CLIENT_ID,
+            'client_secret': STRAVA_CLIENT_SECRET,
+            'refresh_token': user.refresh_token,
+            'grant_type': 'refresh_token'
+        })
+        
+        if token_res.status_code != 200:
+            return None
+        
+        data = token_res.json()
+        user.access_token = data['access_token']
+        user.refresh_token = data['refresh_token']
+        user.token_expires_at = datetime.utcfromtimestamp(data['expires_at'])
+        db.session.commit()
+        
+        # Update session
+        session['access_token'] = user.access_token
+        
+        return user.access_token
+    except Exception as e:
+        print(f"Error refreshing token: {e}")
+        return None
+
+def create_minimal_activity_for_club_detection(run):
+    """Create a minimal Activity object for club detection from a Run"""
+    return Activity(
+        id=int(run.strava_activity_id),
+        name=run.name,
+        distance=run.distance or 0,
+        moving_time=run.moving_time or 0,
+        elapsed_time=run.moving_time or 0,
+        total_elevation_gain=0,
+        type='Run',
+        start_date=run.start_date,
+        start_date_local=run.start_date_local,
+        timezone='UTC',
+        start_latlng=None,
+        end_latlng=None,
+        average_speed=0,
+        max_speed=0,
+        average_heartrate=None,
+        max_heartrate=None,
+        kudos_count=0,
+        athlete_count=0,
+        private=False,
+        resource_state=2,
+        athlete={},
+        sport_type='Run',
+        workout_type=None,
+        utc_offset=0,
+        location_city=None,
+        location_state=None,
+        location_country=None,
+        achievement_count=0,
+        comment_count=0,
+        photo_count=0,
+        map={},
+        trainer=False,
+        commute=False,
+        manual=False,
+        visibility='everyone',
+        flagged=False,
+        gear_id=None,
+        average_cadence=None,
+        average_watts=None,
+        max_watts=None,
+        weighted_average_watts=None,
+        device_watts=False,
+        kilojoules=None,
+        has_heartrate=False,
+        heartrate_opt_out=False,
+        display_hide_heartrate_option=False,
+        elev_high=None,
+        elev_low=None,
+        upload_id=None,
+        upload_id_str=None,
+        external_id=None,
+        from_accepted_tag=False,
+        pr_count=0,
+        total_photo_count=0,
+        has_kudoed=False,
+        club_name=None
+    )
 
 def get_current_year():
     return datetime.now(pytz.UTC).year
@@ -123,7 +218,16 @@ def get_unique_clubs(runs):
     return sorted(set(run.club_name for run in runs if run.club_name))
 
 def slug_to_name(slug):
-    return slug.replace('-', ' ').title()
+    # Convert slug back to name, handling special cases
+    name = slug.replace('-', ' ').title()
+    
+    # Handle special club name cases
+    name_mappings = {
+        'Urc Rotterdam': 'URC Rotterdam',
+        # Add more mappings here as needed
+    }
+    
+    return name_mappings.get(name, name)
 
 def name_to_slug(name):
     return name.lower().replace(' ', '-')
@@ -284,12 +388,19 @@ def club_runs(club_slug):
     if not runs:
         return f"No runs found for club: {club_name}", 404
     monthly_runs = group_runs_by_month(runs)
+    
+    # Get club description from config if it exists
+    club_description = None
+    if club_name in CLUB_CONFIGS:
+        club_description = CLUB_CONFIGS[club_name].get('description')
+    
     return render_template(
         'club.html',
         authorized=True,
         monthly_runs=monthly_runs,
         current_year=get_current_year(),
-        club_name=club_name
+        club_name=club_name,
+        club_description=club_description
     )
 
 @app.route('/my-clubs')
@@ -297,13 +408,21 @@ def club_runs(club_slug):
 def my_clubs_page():
     user_id = session.get('user_id')
     if not user_id:
-        return render_template('my-clubs.html', authorized=False, my_clubs=[])
+        return render_template('my-clubs.html', authorized=False, my_clubs=[], club_descriptions={})
     runs = Run.query.filter_by(user_id=user_id).all()
     my_clubs = get_unique_clubs(runs)
+    
+    # Get club descriptions from config
+    club_descriptions = {}
+    for club in my_clubs:
+        if club in CLUB_CONFIGS:
+            club_descriptions[club] = CLUB_CONFIGS[club].get('description')
+    
     return render_template(
         'my-clubs.html',
         authorized=True,
-        my_clubs=my_clubs
+        my_clubs=my_clubs,
+        club_descriptions=club_descriptions
     )
 
 @app.route('/my-ranks')
@@ -311,13 +430,21 @@ def my_clubs_page():
 def ranks():
     user_id = session.get('user_id')
     if not user_id:
-        return render_template('my-leaderboards.html', authorized=False, my_clubs=[])
+        return render_template('my-leaderboards.html', authorized=False, my_clubs=[], club_descriptions={})
     runs = Run.query.filter_by(user_id=user_id).all()
     my_clubs = get_unique_clubs(runs)
+    
+    # Get club descriptions from config
+    club_descriptions = {}
+    for club in my_clubs:
+        if club in CLUB_CONFIGS:
+            club_descriptions[club] = CLUB_CONFIGS[club].get('description')
+    
     return render_template(
         'my-leaderboards.html',
         authorized=True,
-        my_clubs=my_clubs
+        my_clubs=my_clubs,
+        club_descriptions=club_descriptions
     )
 
 @app.route('/stats')
@@ -496,51 +623,24 @@ def reprocess_clubs():
         
         updated_count = 0
         for run in runs:
-            # Create temporary activity to run detection
-            temp_activity = Activity(
-                id=int(run.strava_activity_id),
-                name=run.name,
-                distance=run.distance or 0,
-                moving_time=run.moving_time or 0,
-                elapsed_time=run.moving_time or 0,
-                total_elevation_gain=0,
-                type='Run',
-                start_date=run.start_date,
-                start_date_local=run.start_date_local,
-                timezone='UTC',
-                start_latlng=None,
-                end_latlng=None,
-                average_speed=0,
-                max_speed=0,
-                average_heartrate=None,
-                max_heartrate=None,
-                kudos_count=0,
-                athlete_count=0,
-                private=False,
-                resource_state=2,
-                athlete={},
-                sport_type='Run',
-                workout_type=None,
-                utc_offset=0,
-                location_city=None,
-                location_state=None,
-                location_country=None,
-                achievement_count=0,
-                comment_count=0,
-                photo_count=0,
-                map={},
-                trainer=False,
-                commute=False,
-                manual=False,
-                visibility='everyone',
-                flagged=False,
-                gear_id=None,
-                average_cadence=None,
-                average_watts=None,
-                max_watts=None,
-                weighted_average_watts=None,
-                club_name=None
-            )
+            # Use the existing raw_json data if available, or create minimal data
+            if run.raw_json:
+                try:
+                    # Try to parse existing JSON data
+                    import json
+                    if isinstance(run.raw_json, str):
+                        raw_data = json.loads(run.raw_json)
+                    else:
+                        raw_data = run.raw_json
+                    
+                    # Create activity from existing data
+                    temp_activity = Activity.from_strava_json(raw_data)
+                except:
+                    # Fallback: create minimal activity for club detection
+                    temp_activity = create_minimal_activity_for_club_detection(run)
+            else:
+                # Create minimal activity for club detection
+                temp_activity = create_minimal_activity_for_club_detection(run)
             
             old_club = run.club_name
             temp_activity.detect_club_run()
@@ -555,6 +655,98 @@ def reprocess_clubs():
         
     except Exception as e:
         return f"Error reprocessing clubs: {str(e)}", 500
+
+@app.route('/refresh-data')
+@login_required
+def refresh_data():
+    """Refresh all data from Strava and reprocess clubs"""
+    try:
+        user_id = session.get('user_id')
+        
+        user = User.query.get(user_id)
+        if not user:
+            return "User not found.", 400
+        
+        # Refresh access token if needed
+        access_token = refresh_access_token(user)
+        if not access_token:
+            return "Failed to refresh access token. Please <a href='/login'>log in again</a>.", 400
+        
+        # Fetch activities from Strava (last 2 years)
+        after_date = get_after_date(get_current_year() - 1)
+        activities = fetch_activities(access_token, after_date)
+        
+        if not activities:
+            return "Failed to fetch activities from Strava. Please try again.", 400
+        
+        # Store/update runs (this will update existing runs and add new ones)
+        old_run_count = Run.query.filter_by(user_id=user_id).count()
+        store_runs(user, activities)
+        new_run_count = Run.query.filter_by(user_id=user_id).count()
+        
+        added_runs = new_run_count - old_run_count
+        
+        # Reprocess club assignments for all runs
+        runs = Run.query.filter_by(user_id=user_id).all()
+        club_updated_count = 0
+        
+        for run in runs:
+            # Use the existing raw_json data if available, or create minimal data
+            if run.raw_json:
+                try:
+                    # Try to parse existing JSON data
+                    import json
+                    if isinstance(run.raw_json, str):
+                        raw_data = json.loads(run.raw_json)
+                    else:
+                        raw_data = run.raw_json
+                    
+                    # Create activity from existing data
+                    temp_activity = Activity.from_strava_json(raw_data)
+                except:
+                    # Fallback: create minimal activity for club detection
+                    temp_activity = create_minimal_activity_for_club_detection(run)
+            else:
+                # Create minimal activity for club detection
+                temp_activity = create_minimal_activity_for_club_detection(run)
+            
+            old_club = run.club_name
+            temp_activity.detect_club_run()
+            new_club = temp_activity.club_name
+            
+            if old_club != new_club:
+                run.club_name = new_club
+                club_updated_count += 1
+        
+        db.session.commit()
+        
+        return f"""
+        <style>
+            body {{ font-family: 'Titillium Web', sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; background: #e4e2dd; }}
+            .success {{ background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 4px; margin: 10px 0; }}
+            .links {{ margin-top: 20px; }}
+            .links a {{ display: inline-block; background: #2d6da3; color: white; padding: 10px 15px; margin: 5px; text-decoration: none; border-radius: 4px; }}
+            .links a:hover {{ background: #3a7fd6; }}
+        </style>
+        <h2>✅ Data Refresh Complete!</h2>
+        <div class="success">
+            <p><strong>Results:</strong></p>
+            <ul>
+                <li>Fetched {len(activities)} activities from Strava</li>
+                <li>Added {added_runs} new runs to database</li>
+                <li>Updated {len(runs)} total runs in database</li>
+                <li>Reprocessed club assignments: {club_updated_count} runs updated</li>
+            </ul>
+        </div>
+        <div class="links">
+            <a href='/'>← Back to Dashboard</a>
+            <a href='/debug-clubs'>🔍 View Club Debug</a>
+            <a href='/stats'>📊 View Stats</a>
+        </div>
+        """
+        
+    except Exception as e:
+        return f"Error refreshing data: {str(e)}", 500
 
 @app.route('/debug-clubs')
 @login_required

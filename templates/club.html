@@ -6,7 +6,10 @@
 </head>
 <body>
     {% include "navbar.html" %}
-    <h1 class="club-title">{{ club_name }}</h1>
+    <h1 class="club-title">{{ club_name }} Runs</h1>
+    {% if club_description %}
+    <p class="club-description">{{ club_description }}</p>
+    {% endif %}
     
     {% for month in monthly_runs|reverse %}
         <h2 class="week-header">

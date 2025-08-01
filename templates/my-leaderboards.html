@@ -6,19 +6,26 @@
 </head>
 <body>
     {% include "navbar.html" %}
-    <h1>Ranks by Club</h1>
+    <h1>Your Club Ranks</h1>
     {% if my_clubs %}
-    <div class="clubs-list">
-        <ul>
-            {% for club in my_clubs %}
-            <li>
-                <a href="{{ url_for('club_leaderboard', club_slug=club|lower|replace(' ', '-') ) }}" class="club-badge" style="text-decoration: none;">
+    <table class="stats-table">
+        {% for club in my_clubs %}
+        <tr>
+            <td>
+                <a href="{{ url_for('club_leaderboard', club_slug=club|lower|replace(' ', '-') ) }}" style="color: #2d6da3; text-decoration: none; font-weight: 600;">
                     {{ club }}
                 </a>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
+            </td>
+            <td>
+                {% if club_descriptions.get(club) %}
+                    {{ club_descriptions[club] }}
+                {% else %}
+                    <span style="color: #999; font-style: italic;">No description available</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
     {% else %}
         <p>You are not a member of any clubs yet.</p>
     {% endif %}

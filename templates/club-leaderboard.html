@@ -1,61 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ club_name }} Leaderboard</title>
+    <title>{{ club_name }} Ranks</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     {% include "navbar.html" %}
-    <h1 class="club-title">{{ club_name }}</h1>
-    <div class="leaderboard-container">
-        {% for month_group in leaderboard_data %}
-            <h2 class="week-header">
-                {{ month_group.month | datetime('%B') }}
-            </h2>
-            <table class="week-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Runner</th>
-                        <th>Run Days</th>
-                        <th>Total Runs</th>
-                        <th>Total Kilometers</th>
-                        <th>Total Time</th>
-                        <th>Average Pace (min/km)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in month_group.rows %}
-                    <tr>
-                        <td>{{ loop.index }}</td>
-                        <td class="runner-cell">
-                          <img src="{{ row.runner.profile_photo }}" alt="Profile photo" style="width:32px;height:32px;border-radius:50%;margin-right:8px;">
-                          {{ row.runner.name }}
-                        </td>
-                        <td>{{ row.total_run_days }}</td>
-                        <td>{{ row.total_runs }}</td>
-                        <td>{{ "%.2f"|format(row.total_km) }}</td>
-                        <td>
-                            {% set seconds = row.total_time %}
-                            {% set h = seconds // 3600 %}
-                            {% set m = (seconds % 3600) // 60 %}
-                            {% set s = seconds % 60 %}
-                            {% if h > 0 %}
-                                {{ h }}:{{ "%02d"|format(m) }}:{{ "%02d"|format(s) }}
-                            {% else %}
-                                {{ m }}:{{ "%02d"|format(s) }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% set pace_min = row.avg_pace|int %}
-                            {% set pace_sec = ((row.avg_pace - pace_min) * 60)|round|int %}
-                            {{ pace_min }}:{{ "%02d"|format(pace_sec) }}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% endfor %}
-    </div>
+    <h1 class="club-title">{{ club_name }} Ranks</h1>
+    
+    {% for month_group in leaderboard_data %}
+        <h2 class="section-header">{{ month_group.month | datetime('%B %Y') }}</h2>
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Runner</th>
+                    <th>Run Days</th>
+                    <th>Total Runs</th>
+                    <th>Distance (km)</th>
+                    <th>Time</th>
+                    <th>Avg Pace</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in month_group.rows %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="runner-cell">
+                        <img src="{{ row.runner.profile_photo }}" alt="Profile photo" style="width:24px;height:24px;border-radius:50%;margin-right:8px;">
+                        {{ row.runner.name }}
+                    </td>
+                    <td>{{ row.total_run_days }}</td>
+                    <td>{{ row.total_runs }}</td>
+                    <td>{{ "%.1f"|format(row.total_km) }}</td>
+                    <td>
+                        {% set seconds = row.total_time %}
+                        {% set h = seconds // 3600 %}
+                        {% set m = (seconds % 3600) // 60 %}
+                        {% if h > 0 %}
+                            {{ h }}h {{ m }}m
+                        {% else %}
+                            {{ m }}m
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% set pace_min = row.avg_pace|int %}
+                        {% set pace_sec = ((row.avg_pace - pace_min) * 60)|round|int %}
+                        {{ pace_min }}:{{ "%02d"|format(pace_sec) }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
 </body>
 </html>
