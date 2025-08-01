@@ -8,7 +8,7 @@
     {% include "navbar.html" %}
     <h1 class="club-title">{{ club_name }} Ranks</h1>
     
-    {% for month_group in leaderboard_data %}
+    {% for month_group in rank_data %}
         <h2 class="section-header">{{ month_group.month | datetime('%B %Y') }}</h2>
         <table class="stats-table">
             <thead>

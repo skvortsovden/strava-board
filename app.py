@@ -405,7 +405,7 @@ def club_runs(club_slug):
 
 @app.route('/my-clubs')
 @login_required
-def my_clubs_page():
+def clubs():
     user_id = session.get('user_id')
     if not user_id:
         return render_template('my-clubs.html', authorized=False, my_clubs=[], club_descriptions={})
@@ -430,7 +430,7 @@ def my_clubs_page():
 def ranks():
     user_id = session.get('user_id')
     if not user_id:
-        return render_template('my-leaderboards.html', authorized=False, my_clubs=[], club_descriptions={})
+        return render_template('my-ranks.html', authorized=False, my_clubs=[], club_descriptions={})
     runs = Run.query.filter_by(user_id=user_id).all()
     my_clubs = get_unique_clubs(runs)
     
@@ -441,7 +441,7 @@ def ranks():
             club_descriptions[club] = CLUB_CONFIGS[club].get('description')
     
     return render_template(
-        'my-leaderboards.html',
+        'my-ranks.html',
         authorized=True,
         my_clubs=my_clubs,
         club_descriptions=club_descriptions
@@ -527,9 +527,9 @@ def calculate_longest_streak(runs):
     
     return longest_streak
 
-@app.route('/<club_slug>/leaderboard')
+@app.route('/<club_slug>/rank')
 @login_required
-def club_leaderboard(club_slug):
+def club_rank(club_slug):
     from sqlalchemy import extract
     club_name = slug_to_name(club_slug)
     current_year = get_current_year()
@@ -545,15 +545,15 @@ def club_leaderboard(club_slug):
     )
 
     # Group by user and month
-    leaderboard = defaultdict(lambda: defaultdict(list))  # {user: {month: [runs]}}
+    rank = defaultdict(lambda: defaultdict(list))  # {user: {month: [runs]}}
 
     for run, user in runs:
         month = run.start_date_local.strftime('%Y-%m') if run.start_date_local else 'unknown'
-        leaderboard[user][month].append(run)
+        rank[user][month].append(run)
 
-    # Prepare leaderboard data
-    leaderboard_data = []
-    for user, months in leaderboard.items():
+    # Prepare rank data
+    rank_data = []
+    for user, months in rank.items():
         for month, user_runs in months.items():
             total_runs = len(user_runs)
             total_km = sum(r.distance or 0 for r in user_runs) / 1000
@@ -561,7 +561,7 @@ def club_leaderboard(club_slug):
             avg_pace = (
                 (total_time / 60) / total_km if total_km > 0 else 0
             )  # min/km
-            leaderboard_data.append({
+            rank_data.append({
                 'runner': user,
                 'month': month,
                 'total_runs': total_runs,
@@ -571,16 +571,16 @@ def club_leaderboard(club_slug):
             })
 
     # Sort by month, then by total_km descending
-    leaderboard_data.sort(key=lambda x: (x['month'], -x['total_km']))
+    rank_data.sort(key=lambda x: (x['month'], -x['total_km']))
 
-    # Group leaderboard_data by month for the template
+    # Group rank_data by month for the template
     month_groups = defaultdict(lambda: defaultdict(list))  # {month: {user: [runs]}}
 
     for run, user in runs:
         month = run.start_date_local.strftime('%Y-%m')
         month_groups[month][user].append(run)
 
-    leaderboard_data_grouped = []
+    rank_data_grouped = []
     for month, user_runs in month_groups.items():
         rows = []
         for user, runs_list in user_runs.items():
@@ -599,18 +599,18 @@ def club_leaderboard(club_slug):
             })
         # Sort: first by total_run_days desc, then by total_km desc
         rows.sort(key=lambda x: (-x['total_run_days'], -x['total_km']))
-        leaderboard_data_grouped.append({
+        rank_data_grouped.append({
             'month': month,
             'rows': rows
         })
 
     # Sort months reverse (latest first)
-    leaderboard_data_grouped.sort(key=lambda x: x['month'], reverse=True)
+    rank_data_grouped.sort(key=lambda x: x['month'], reverse=True)
 
     return render_template(
-        'club-leaderboard.html',
+        'club-rank.html',
         club_name=club_name,
-        leaderboard_data=leaderboard_data_grouped
+        rank_data=rank_data_grouped
     )
 
 @app.route('/reprocess-clubs')

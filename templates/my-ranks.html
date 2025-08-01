@@ -12,7 +12,7 @@
         {% for club in my_clubs %}
         <tr>
             <td>
-                <a href="{{ url_for('club_leaderboard', club_slug=club|lower|replace(' ', '-') ) }}" style="color: #2d6da3; text-decoration: none; font-weight: 600;">
+                <a href="{{ url_for('club_rank', club_slug=club|lower|replace(' ', '-') ) }}" style="color: #2d6da3; text-decoration: none; font-weight: 600;">
                     {{ club }}
                 </a>
             </td>
