@@ -401,13 +401,80 @@ def club_leaderboard(club_slug):
         leaderboard_data=leaderboard_data_grouped
     )
 
+@app.route('/debug-clubs')
+@login_required
+def debug_clubs():
+    try:
+        from config import CLUB_CONFIGS
+        user_id = session.get('user_id')
+        runs = Run.query.filter_by(user_id=user_id).order_by(Run.start_date_local.desc()).all()
+        
+        debug_info = ["<h2>Club Configuration Debug</h2>"]
+        
+        # Show current club configs
+        debug_info.append("<h3>Current Club Configurations:</h3>")
+        for club_name, config in CLUB_CONFIGS.items():
+            days_names = [['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][d] for d in config['days']]
+            debug_info.append(f"<b>{club_name}:</b> {', '.join(days_names)} {config['start_time']} - {config['end_time']}")
+        
+        # Analyze runs by day/time
+        debug_info.append("<h3>Your Recent Runs Analysis:</h3>")
+        day_time_stats = {}
+        for run in runs[:50]:  # Last 50 runs
+            day = run.start_date_local.weekday()
+            hour = run.start_date_local.hour
+            day_name = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][day]
+            key = f"{day_name} {hour:02d}:xx"
+            day_time_stats[key] = day_time_stats.get(key, 0) + 1
+        
+        # Sort by frequency
+        sorted_stats = sorted(day_time_stats.items(), key=lambda x: x[1], reverse=True)
+        debug_info.append("<p>Most common run times (to help configure clubs):</p>")
+        for time_slot, count in sorted_stats[:10]:
+            debug_info.append(f"• {time_slot}: {count} runs<br>")
+            
+        # Show club runs found
+        club_runs = [r for r in runs if r.club_name]
+        debug_info.append(f"<h3>Club Runs Found: {len(club_runs)}</h3>")
+        for run in club_runs[:10]:
+            day_name = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][run.start_date_local.weekday()]
+            run_time = run.start_date_local.strftime('%H:%M')
+            debug_info.append(f"• {run.name} - {day_name} {run_time} - Club: {run.club_name}<br>")
+        
+        return "".join(debug_info)
+    except Exception as e:
+        return f"Debug error: {str(e)}", 500
+
 @app.route('/debug')
 def debug():
     try:
         # Test database connection
         user_count = User.query.count()
         run_count = Run.query.count()
-        return f"Database OK - Users: {user_count}, Runs: {run_count}"
+        
+        # Get current user's runs if logged in
+        user_id = session.get('user_id')
+        debug_info = [f"Database OK - Users: {user_count}, Runs: {run_count}"]
+        
+        if user_id:
+            user = User.query.get(user_id)
+            runs = Run.query.filter_by(user_id=user_id).order_by(Run.start_date_local.desc()).limit(10).all()
+            debug_info.append(f"<br><br>User: {user.name if user else 'Unknown'}")
+            debug_info.append(f"Total runs for user: {len(Run.query.filter_by(user_id=user_id).all())}")
+            
+            if runs:
+                debug_info.append("<br><br>Recent runs:")
+                for run in runs:
+                    day_name = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][run.start_date_local.weekday()]
+                    run_time = run.start_date_local.strftime('%H:%M')
+                    club_status = f"Club: {run.club_name}" if run.club_name else "No club"
+                    debug_info.append(f"<br>• {run.name} - {day_name} {run_time} - {club_status}")
+            else:
+                debug_info.append("<br><br>No runs found for current user")
+        else:
+            debug_info.append("<br><br>Not logged in")
+            
+        return "<br>".join(debug_info)
     except Exception as e:
         return f"Database Error: {str(e)}", 500
 
