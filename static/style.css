@@ -328,15 +328,46 @@ blockquote {
     border-bottom: none;
 }
 
-.stats-table td:last-child {
-    text-align: right;
-    font-weight: 600;
-}
-
 /* Override right alignment for club description tables */
 .stats-table td.text-muted {
     text-align: left;
     font-weight: normal;
+}
+
+/* Center align stats values instead of right align */
+.stats-table td:last-child {
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Club list styling for my-clubs and my-ranks pages */
+.club-list-table td {
+    padding: 16px 12px;
+}
+
+.club-link {
+    color: #3182ce;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1em;
+    display: block;
+}
+
+.club-link:hover {
+    color: #2c5aa0;
+    text-decoration: underline;
+}
+
+/* Make club names bigger on mobile */
+@media (max-width: 768px) {
+    .club-link {
+        font-size: 1.25em;
+        padding: 4px 0;
+    }
+    
+    .club-list-table td {
+        padding: 20px 12px;
+    }
 }
 
 .section-header {
@@ -496,13 +527,13 @@ blockquote {
     
     .club-rank-table th:nth-child(4),
     .club-rank-table td:nth-child(4) { /* Runs */
-        width: 45px;
+        width: 35px;
         text-align: center;
     }
     
     .club-rank-table th:nth-child(5),
     .club-rank-table td:nth-child(5) { /* Distance */
-        width: 100px;
+        width: 110px;
         text-align: center;
     }
     
@@ -583,12 +614,12 @@ blockquote {
     
     .club-rank-table th:nth-child(4),
     .club-rank-table td:nth-child(4) { /* Runs */
-        width: 55px;
+        width: 45px;
     }
     
     .club-rank-table th:nth-child(5),
     .club-rank-table td:nth-child(5) { /* Distance */
-        width: 120px;
+        width: 130px;
     }
     
     .runner-cell img {
@@ -860,12 +891,12 @@ blockquote {
     
     .club-rank-table th:nth-child(4),
     .club-rank-table td:nth-child(4) { /* Runs */
-        width: 65px;
+        width: 55px;
     }
     
     .club-rank-table th:nth-child(5),
     .club-rank-table td:nth-child(5) { /* Distance */
-        width: 120px;
+        width: 130px;
     }
     
     .club-rank-table th:nth-child(6),

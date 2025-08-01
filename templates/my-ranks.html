@@ -13,20 +13,13 @@
         {% if my_clubs %}
             <div class="table-container">
                 <div class="table-responsive">
-                    <table class="stats-table">
+                    <table class="stats-table club-list-table">
                         {% for club in my_clubs %}
                         <tr>
                             <td>
-                                <a href="{{ url_for('club_rank', club_slug=club|lower|replace(' ', '-') ) }}" style="color: #3182ce; text-decoration: none; font-weight: 600;">
+                                <a href="{{ url_for('club_rank', club_slug=club|lower|replace(' ', '-') ) }}" class="club-link">
                                     {{ club }}
                                 </a>
-                            </td>
-                            <td class="text-muted">
-                                {% if club_descriptions.get(club) %}
-                                    {{ club_descriptions[club] }}
-                                {% else %}
-                                    <span style="font-style: italic;">No description available</span>
-                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
