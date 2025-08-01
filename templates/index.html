@@ -18,48 +18,42 @@
         <div class="container">
             <h1>Your Runs</h1>
         
-            {% for week in weekly_runs|reverse %}
-                <div class="table-container">
-                    <h2 class="week-header">
-                        <span>Week {{ week.week_num }}</span>
-                        <span class="week-dates">
-                            {{ week.start_date.strftime('%d') }} - {{ (week.end_date - timedelta(days=1)).strftime('%d') }} {{ (week.end_date - timedelta(days=1)).strftime('%B').lower() }}
-                        </span>
-                    </h2>
-                    <div class="table-responsive">
-                        <table class="week-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Name</th>
-                                    <th class="mobile-hide">Duration</th>
-                                    <th>Distance</th>
-                                    <th class="mobile-hide">Pace</th>
-                                    <th>Club</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="week-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Time</th>
+                                <th>Dist</th>
+                                <th>Pace</th>
+                                <th class="mobile-hide">Club</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for week in weekly_runs|reverse %}
                                 {% for run in week.runs %}
                                 <tr data-club-run="{{ 'true' if run.club_name else 'false' }}">
-                                    <td>{{ run.start_date_local.strftime('%d/%m %H:%M') }}</td>
+                                    <td>{{ run.start_date_local.strftime('%d/%m<br>%H:%M')|safe }}</td>
                                     <td>{{ run.name }}</td>
-                                    <td class="mobile-hide">{{ run.format_duration() }}</td>
+                                    <td>{{ run.format_duration() }}</td>
                                     <td class="font-mono">{{ "%.1f"|format(run.distance/1000) }} km</td>
-                                    <td class="mobile-hide font-mono">{{ run.format_pace() }}</td>
-                                    <td>
+                                    <td class="font-mono">{{ run.format_pace() }}</td>
+                                    <td class="mobile-hide">
                                         {% if run.club_name %}
-                                            <span class="club-badge">{{ run.club_name }}</span>
+                                            <a href="{{ url_for('club_runs', club_slug=run.club_name|lower|replace(' ', '-')) }}" class="club-badge">{{ run.club_name }}</a>
                                         {% else %}
                                             <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-            {% endfor %}
+            </div>
         </div>
     {% endif %}
 </body>

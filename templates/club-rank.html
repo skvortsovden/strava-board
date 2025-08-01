@@ -15,14 +15,14 @@
             <div class="table-container">
                 <h2 class="section-header">{{ month_group.month | datetime('%B %Y') }}</h2>
                 <div class="table-responsive">
-                    <table class="stats-table">
+                    <table class="stats-table club-rank-table">
                         <thead>
                             <tr>
-                                <th>Rank</th>
+                                <th>#</th>
                                 <th>Runner</th>
                                 <th class="mobile-hide">Run Days</th>
                                 <th>Runs</th>
-                                <th>Distance</th>
+                                <th>Dist</th>
                                 <th class="mobile-hide">Time</th>
                                 <th class="mobile-hide">Avg Pace</th>
                             </tr>
@@ -30,7 +30,7 @@
                         <tbody>
                             {% for row in month_group.rows %}
                             <tr>
-                                <td class="font-mono">#{{ loop.index }}</td>
+                                <td class="font-mono">{{ loop.index }}</td>
                                 <td class="runner-cell">
                                     <img src="{{ row.runner.profile_photo }}" alt="Profile photo">
                                     <span>{{ row.runner.name }}</span>
