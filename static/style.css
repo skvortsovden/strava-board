@@ -333,6 +333,12 @@ blockquote {
     font-weight: 600;
 }
 
+/* Override right alignment for club description tables */
+.stats-table td.text-muted {
+    text-align: left;
+    font-weight: normal;
+}
+
 .section-header {
     font-size: 1.2em;
     font-weight: 600;
