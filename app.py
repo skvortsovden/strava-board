@@ -154,7 +154,7 @@ def store_runs(user, activities):
                 start_date=activity.start_date,
                 start_date_local=activity.start_date_local,
                 distance=activity.distance,
-                duration=activity.moving_time,
+                moving_time=activity.moving_time,
                 club_name=activity.club_name,
                 raw_json=act
             )
@@ -164,7 +164,7 @@ def store_runs(user, activities):
             run.start_date = activity.start_date
             run.start_date_local = activity.start_date_local
             run.distance = activity.distance
-            run.duration = activity.moving_time
+            run.moving_time = activity.moving_time
             run.club_name = activity.club_name
             run.raw_json = act
     db.session.commit()
@@ -345,7 +345,7 @@ def club_leaderboard(club_slug):
         for month, user_runs in months.items():
             total_runs = len(user_runs)
             total_km = sum(r.distance or 0 for r in user_runs) / 1000
-            total_time = sum(r.duration or 0 for r in user_runs)
+            total_time = sum(r.moving_time or 0 for r in user_runs)
             avg_pace = (
                 (total_time / 60) / total_km if total_km > 0 else 0
             )  # min/km
@@ -375,7 +375,7 @@ def club_leaderboard(club_slug):
             run_days = set(r.start_date_local.date() for r in runs_list if r.start_date_local)
             total_run_days = len(run_days)
             total_km = sum(r.distance or 0 for r in runs_list) / 1000
-            total_time = sum(r.duration or 0 for r in runs_list)
+            total_time = sum(r.moving_time or 0 for r in runs_list)
             avg_pace = (total_time / 60) / total_km if total_km > 0 else 0
             rows.append({
                 'runner': user,
