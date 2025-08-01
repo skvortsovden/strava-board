@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime, time
+from datetime import datetime
 from typing import Optional, List, Any
 import pytz
 from config import CLUB_CONFIGS

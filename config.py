@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, time
+from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -15,10 +15,6 @@ CLUB_CONFIGS = {
             'start': '10:00',  # Start a bit earlier to catch your 10:23 run
             'end': '12:30'     # Keep the end time
         },
-        'city': 'Rotterdam',
         'description': 'Ukrainian Running Club in Rotterdam. We run & eat cakes every Sunday.'
     }
 }
-
-SQLALCHEMY_DATABASE_URI = 'postgresql://strava:strava_pass@localhost:5432/strava_board'
-SQLALCHEMY_TRACK_MODIFICATIONS = False

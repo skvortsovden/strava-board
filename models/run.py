@@ -50,31 +50,14 @@ class Run(db.Model):
             return
         run_time = run_date.time()
         for club_name, config in CLUB_CONFIGS.items():
-            if run_date.weekday() in config['days']:
-                start = config['start_time']
-                end = config['end_time']
-                if start <= run_time <= end:
+            # Check if run is on configured day
+            if run_date.strftime('%A') in config['days']:
+                # Convert time window to time objects
+                from datetime import datetime
+                start_time = datetime.strptime(config['time_window']['start'], '%H:%M').time()
+                end_time = datetime.strptime(config['time_window']['end'], '%H:%M').time()
+                
+                # Check if run time is within window
+                if start_time <= run_time <= end_time:
                     self.club_name = club_name
                     break
-
-def get_user_runs(user_id):
-    runs_ref = db.collection('runs')
-    docs = runs_ref.where('user_id', '==', user_id).stream()
-    return [doc.to_dict() for doc in docs]
-
-def get_club_runs(club_name, year):
-    runs_ref = db.collection('runs')
-    docs = runs_ref.where('club_name', '==', club_name).stream()
-    runs = []
-    for doc in docs:
-        run = doc.to_dict()
-        # Filter by year in Python, since Firestore can't filter on computed fields
-        if 'start_date_local' in run:
-            dt = run['start_date_local']
-            # dt should be a Firestore timestamp or ISO string; convert as needed
-            if isinstance(dt, str):
-                from datetime import datetime
-                dt = datetime.fromisoformat(dt)
-            if dt.year == year:
-                runs.append(run)
-    return runs

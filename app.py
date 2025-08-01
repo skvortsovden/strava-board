@@ -148,13 +148,6 @@ def fetch_activities(access_token, after_date):
         return None
     return res.json()
 
-def get_runs(activities):
-    return [
-        Activity.from_strava_json(act)
-        for act in activities
-        if act['type'] == 'Run'
-    ]
-
 def get_year_week_ranges():
     """All week ranges (Monday-Sunday) for the current year"""
     current_year = get_current_year()
@@ -228,9 +221,6 @@ def slug_to_name(slug):
     }
     
     return name_mappings.get(name, name)
-
-def name_to_slug(name):
-    return name.lower().replace(' ', '-')
 
 def login_required(f):
     @wraps(f)
