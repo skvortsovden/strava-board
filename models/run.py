@@ -1,5 +1,6 @@
 from datetime import datetime
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Text
 from . import db
 
 class Run(db.Model):
@@ -12,7 +13,8 @@ class Run(db.Model):
     distance = db.Column(db.Float)              # In meters
     moving_time = db.Column(db.Integer)            # In seconds
     club_name = db.Column(db.String)
-    raw_json = db.Column(JSONB)                 # Optional: for debugging/future use
+    # Use Text for SQLite compatibility, JSONB for PostgreSQL
+    raw_json = db.Column(Text().with_variant(JSONB, 'postgresql'))
 
     @property
     def pace_per_km(self) -> float:

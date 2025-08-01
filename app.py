@@ -137,6 +137,7 @@ def login_required(f):
     return decorated_function
 
 def store_runs(user, activities):
+    import json
     for act in activities:
         if act['type'] != 'Run':
             continue
@@ -146,6 +147,10 @@ def store_runs(user, activities):
 
         # Check if run already exists
         run = Run.query.filter_by(strava_activity_id=str(activity.id)).first()
+        
+        # Serialize JSON for SQLite compatibility
+        raw_json_data = json.dumps(act) if app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite') else act
+        
         if not run:
             run = Run(
                 user_id=user.id,
@@ -156,7 +161,7 @@ def store_runs(user, activities):
                 distance=activity.distance,
                 moving_time=activity.moving_time,
                 club_name=activity.club_name,
-                raw_json=act
+                raw_json=raw_json_data
             )
             db.session.add(run)
         else:
@@ -166,7 +171,7 @@ def store_runs(user, activities):
             run.distance = activity.distance
             run.moving_time = activity.moving_time
             run.club_name = activity.club_name
-            run.raw_json = act
+            run.raw_json = raw_json_data
     db.session.commit()
 
 # --- Routes ---
@@ -301,9 +306,9 @@ def my_clubs_page():
         my_clubs=my_clubs
     )
 
-@app.route('/my-leaderboards')
+@app.route('/my-ranks')
 @login_required
-def leaderboards():
+def ranks():
     user_id = session.get('user_id')
     if not user_id:
         return render_template('my-leaderboards.html', authorized=False, my_clubs=[])
