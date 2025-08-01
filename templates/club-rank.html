@@ -1,57 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ club_name }} Ranks</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     {% include "navbar.html" %}
-    <h1 class="club-title">{{ club_name }} Ranks</h1>
-    
-    {% for month_group in rank_data %}
-        <h2 class="section-header">{{ month_group.month | datetime('%B %Y') }}</h2>
-        <table class="stats-table">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Runner</th>
-                    <th>Run Days</th>
-                    <th>Total Runs</th>
-                    <th>Distance (km)</th>
-                    <th>Time</th>
-                    <th>Avg Pace</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in month_group.rows %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td class="runner-cell">
-                        <img src="{{ row.runner.profile_photo }}" alt="Profile photo" style="width:24px;height:24px;border-radius:50%;margin-right:8px;">
-                        {{ row.runner.name }}
-                    </td>
-                    <td>{{ row.total_run_days }}</td>
-                    <td>{{ row.total_runs }}</td>
-                    <td>{{ "%.1f"|format(row.total_km) }}</td>
-                    <td>
-                        {% set seconds = row.total_time %}
-                        {% set h = seconds // 3600 %}
-                        {% set m = (seconds % 3600) // 60 %}
-                        {% if h > 0 %}
-                            {{ h }}h {{ m }}m
-                        {% else %}
-                            {{ m }}m
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% set pace_min = row.avg_pace|int %}
-                        {% set pace_sec = ((row.avg_pace - pace_min) * 60)|round|int %}
-                        {{ pace_min }}:{{ "%02d"|format(pace_sec) }}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endfor %}
+    <div class="container">
+        <h1 class="club-title">{{ club_name }} Ranks</h1>
+        
+        {% for month_group in rank_data %}
+            <div class="table-container">
+                <h2 class="section-header">{{ month_group.month | datetime('%B %Y') }}</h2>
+                <div class="table-responsive">
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Runner</th>
+                                <th class="mobile-hide">Run Days</th>
+                                <th>Runs</th>
+                                <th>Distance</th>
+                                <th class="mobile-hide">Time</th>
+                                <th class="mobile-hide">Avg Pace</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in month_group.rows %}
+                            <tr>
+                                <td class="font-mono">#{{ loop.index }}</td>
+                                <td class="runner-cell">
+                                    <img src="{{ row.runner.profile_photo }}" alt="Profile photo">
+                                    <span>{{ row.runner.name }}</span>
+                                </td>
+                                <td class="mobile-hide font-mono">{{ row.total_run_days }}</td>
+                                <td class="font-mono">{{ row.total_runs }}</td>
+                                <td class="font-mono">{{ "%.1f"|format(row.total_km) }} km</td>
+                                <td class="mobile-hide font-mono">
+                                    {% set seconds = row.total_time %}
+                                    {% set h = seconds // 3600 %}
+                                    {% set m = (seconds % 3600) // 60 %}
+                                    {% if h > 0 %}
+                                        {{ h }}h {{ m }}m
+                                    {% else %}
+                                        {{ m }}m
+                                    {% endif %}
+                                </td>
+                                <td class="mobile-hide font-mono">
+                                    {% set pace_min = row.avg_pace|int %}
+                                    {% set pace_sec = ((row.avg_pace - pace_min) * 60)|round|int %}
+                                    {{ pace_min }}:{{ "%02d"|format(pace_sec) }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 </body>
 </html>

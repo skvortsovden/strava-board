@@ -1,65 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stats - Strava Board</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     {% if not authorized %}
         <div class="center-container">
-            <a href="{{ url_for('login') }}" class="strava-btn">Connect with Strava</a>
+            <div class="container">
+                <a href="{{ url_for('login') }}" class="strava-btn">Connect with Strava</a>
+            </div>
         </div>
     {% else %}
         {% include 'navbar.html' %}
-        <h1>Your Stats</h1>
-        
-        {% if not stats %}
-            <p>No running data found. Start running and sync your activities!</p>
-        {% else %}
-            <h2 class="section-header">All Time</h2>
-            <table class="stats-table">
-                <tr>
-                    <td>Total runs</td>
-                    <td>{{ stats.total_runs }}</td>
-                </tr>
-                <tr>
-                    <td>Total days running</td>
-                    <td>{{ stats.total_days_running }}</td>
-                </tr>
-                <tr>
-                    <td>Total distance</td>
-                    <td>{{ stats.total_kilometers }} km</td>
-                </tr>
-                <tr>
-                    <td>Total time</td>
-                    <td>{{ stats.total_hours }} hours</td>
-                </tr>
-                <tr>
-                    <td>Longest run</td>
-                    <td>{{ stats.longest_distance }} km</td>
-                </tr>
-                <tr>
-                    <td>Longest streak</td>
-                    <td>{{ stats.longest_streak }} days</td>
-                </tr>
-            </table>
+        <div class="container">
+            <h1>Your Stats</h1>
+            
+            {% if not stats %}
+                <div class="no-data">
+                    <p>No running data found. Start running and sync your activities!</p>
+                </div>
+            {% else %}
+                <div class="table-container">
+                    <h2 class="section-header">All Time</h2>
+                    <div class="table-responsive">
+                        <table class="stats-table">
+                            <tr>
+                                <td>Total runs</td>
+                                <td>{{ stats.total_runs }}</td>
+                            </tr>
+                            <tr>
+                                <td>Total days running</td>
+                                <td>{{ stats.total_days_running }}</td>
+                            </tr>
+                            <tr>
+                                <td>Total distance</td>
+                                <td>{{ stats.total_kilometers }} km</td>
+                            </tr>
+                            <tr>
+                                <td>Total time</td>
+                                <td>{{ stats.total_hours }} hours</td>
+                            </tr>
+                            <tr>
+                                <td>Longest run</td>
+                                <td>{{ stats.longest_distance }} km</td>
+                            </tr>
+                            <tr>
+                                <td>Longest streak</td>
+                                <td>{{ stats.longest_streak }} days</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
 
-            <h2 class="section-header">{{ stats.current_year }}</h2>
-            <table class="stats-table">
-                <tr>
-                    <td>Runs this year</td>
-                    <td>{{ stats.current_year_runs }}</td>
-                </tr>
-                <tr>
-                    <td>Distance this year</td>
-                    <td>{{ stats.current_year_kilometers }} km</td>
-                </tr>
-                <tr>
-                    <td>Time this year</td>
-                    <td>{{ stats.current_year_hours }} hours</td>
-                </tr>
-            </table>
-        {% endif %}
+                <div class="table-container">
+                    <h2 class="section-header">{{ stats.current_year }}</h2>
+                    <div class="table-responsive">
+                        <table class="stats-table">
+                            <tr>
+                                <td>Runs this year</td>
+                                <td>{{ stats.current_year_runs }}</td>
+                            </tr>
+                            <tr>
+                                <td>Distance this year</td>
+                                <td>{{ stats.current_year_kilometers }} km</td>
+                            </tr>
+                            <tr>
+                                <td>Time this year</td>
+                                <td>{{ stats.current_year_hours }} hours</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     {% endif %}
 </body>
 </html>

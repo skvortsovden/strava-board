@@ -1,33 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranks</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     {% include "navbar.html" %}
-    <h1>Your Club Ranks</h1>
-    {% if my_clubs %}
-    <table class="stats-table">
-        {% for club in my_clubs %}
-        <tr>
-            <td>
-                <a href="{{ url_for('club_rank', club_slug=club|lower|replace(' ', '-') ) }}" style="color: #2d6da3; text-decoration: none; font-weight: 600;">
-                    {{ club }}
-                </a>
-            </td>
-            <td>
-                {% if club_descriptions.get(club) %}
-                    {{ club_descriptions[club] }}
-                {% else %}
-                    <span style="color: #999; font-style: italic;">No description available</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-        <p>You are not a member of any clubs yet.</p>
-    {% endif %}
+    <div class="container">
+        <h1>Your Club Ranks</h1>
+        {% if my_clubs %}
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="stats-table">
+                        {% for club in my_clubs %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('club_rank', club_slug=club|lower|replace(' ', '-') ) }}" style="color: #3182ce; text-decoration: none; font-weight: 600;">
+                                    {{ club }}
+                                </a>
+                            </td>
+                            <td class="text-muted">
+                                {% if club_descriptions.get(club) %}
+                                    {{ club_descriptions[club] }}
+                                {% else %}
+                                    <span style="font-style: italic;">No description available</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="no-data">
+                <p>You are not a member of any clubs yet.</p>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>

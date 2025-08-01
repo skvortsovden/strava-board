@@ -218,9 +218,9 @@ blockquote {
 }
 
 .main-navbar {
-    padding: 0; /* Remove vertical padding here */
+    padding: 0;
     margin-bottom: 2em;
-    min-height: 48px; /* Optional: set a min height for nav */
+    min-height: 48px;
 }
 .main-navbar ul {
     list-style: none;
@@ -229,12 +229,12 @@ blockquote {
     display: flex;
     gap: 2em;
     align-items: center;
-    height: 48px; /* Match min-height if set */
+    height: 48px;
 }
 .main-navbar li {
     display: flex;
     align-items: center;
-    height: 48px; /* Match nav height */
+    height: 48px;
 }
 .main-navbar a {
     color: #265d95;
@@ -242,7 +242,7 @@ blockquote {
     font-weight: 600;
     font-size: 1.1em;
     text-decoration: none;
-    padding: 0 0.8em; /* Only horizontal padding */
+    padding: 0 0.8em;
     transition: background 0.2s;
     height: 32px;
     display: flex;
@@ -348,4 +348,353 @@ blockquote {
     font-weight: 600;
     margin: 2em 0 1em 0;
     color: #333;
+}
+
+/* Responsive Design - Mobile Only */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem 0.75rem;
+        max-width: 100%;
+    }
+    
+    .main-navbar ul {
+        padding: 0 0.75rem;
+        gap: 1em;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .main-navbar a {
+        padding: 0 0.6em;
+        font-size: 1em;
+        white-space: nowrap;
+    }
+    
+    /* Hide less important columns on mobile */
+    .mobile-hide {
+        display: none;
+    }
+    
+    /* Better table scrolling */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .week-table, .stats-table {
+        font-size: 0.85em;
+    }
+    
+    .week-table th,
+    .week-table td,
+    .stats-table th,
+    .stats-table td {
+        padding: 8px 10px;
+    }
+    
+    /* Adjust runner cell for mobile */
+    .runner-cell {
+        white-space: normal;
+    }
+    
+    .runner-cell img {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        margin-right: 6px;
+    }
+    
+    /* Week header mobile adjustments */
+    .week-header {
+        font-size: 1.1em;
+    }
+    
+    .week-dates {
+        display: block;
+        margin-left: 0;
+        margin-top: 0.25em;
+        font-size: 0.8em;
+    }
+    
+    /* Better touch targets */
+    .strava-btn, .refresh-btn, .back-link {
+        min-height: 44px;
+        padding: 0.75em 1.5em;
+    }
+}
+
+/* Tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+    body {
+        max-width: 900px;
+        padding: 2rem 1.25rem;
+    }
+}
+
+/* Ensure mobile-hide is shown on larger screens */
+@media (min-width: 769px) {
+    .mobile-hide {
+        display: table-cell;
+    }
+}
+
+.club-description {
+    font-style: italic;
+    color: #718096;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.club-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    background: #ebf8ff;
+    color: #3182ce;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: 1px solid #bee3f8;
+}
+
+.club-badge:hover {
+    background: #bee3f8;
+}
+
+/* Runner cell styles */
+.runner-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.runner-cell img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-muted {
+    color: #718096;
+}
+
+.font-mono {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.no-data {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #718096;
+    font-style: italic;
+}
+
+/* Legacy button styles for compatibility */
+.refresh-section {
+    margin: 20px 0;
+    text-align: right;
+}
+
+.refresh-btn {
+    background: #38a169;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: inline-block;
+    min-height: 44px;
+}
+
+.refresh-btn:hover {
+    background: #2f855a;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.back-link {
+    display: inline-block;
+    margin: 20px 0;
+    padding: 10px 20px;
+    background-color: #3182ce;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.back-link:hover {
+    background-color: #2c5282;
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: white;
+}
+
+/* Responsive Design */
+
+/* Mobile phones (up to 768px) */
+@media (max-width: 768px) {
+    body {
+        padding: 0;
+    }
+    
+    .container {
+        max-width: 100%;
+        padding: 0.75rem;
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+    }
+    
+    .main-navbar ul {
+        padding: 0 0.75rem;
+        gap: 0;
+    }
+    
+    .main-navbar a {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Stack table cells vertically on mobile for better readability */
+    .week-table,
+    .stats-table {
+        font-size: 0.8rem;
+    }
+    
+    .week-table th,
+    .week-table td,
+    .stats-table th,
+    .stats-table td {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    /* Hide less important columns on mobile */
+    .mobile-hide {
+        display: none;
+    }
+    
+    /* Adjust runner cell for mobile */
+    .runner-cell {
+        gap: 0.5rem;
+    }
+    
+    .runner-cell img {
+        width: 24px;
+        height: 24px;
+    }
+    
+    /* Improve touch targets */
+    .btn, .strava-btn, .refresh-btn, .back-link {
+        min-height: 48px;
+        padding: 0.875rem 1.5rem;
+    }
+    
+    /* Better spacing for cards */
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table-container {
+        margin-bottom: 1rem;
+        border-radius: 8px;
+    }
+    
+    /* Week header mobile adjustments */
+    .week-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .week-dates {
+        font-size: 0.8rem;
+    }
+    
+    /* Better mobile table scrolling */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Tablets (768px to 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .container {
+        padding: 1.25rem;
+    }
+    
+    .main-navbar ul {
+        gap: 1rem;
+    }
+    
+    .main-navbar a {
+        padding: 1rem 1.25rem;
+    }
+}
+
+/* Large screens (1024px+) */
+@media (min-width: 1024px) {
+    .table-responsive::after {
+        display: none;
+    }
+    
+    /* Better hover effects on desktop */
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    /* Show all columns on desktop */
+    .mobile-hide {
+        display: table-cell;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus styles for accessibility */
+a:focus,
+.btn:focus,
+.strava-btn:focus,
+.refresh-btn:focus,
+.back-link:focus {
+    outline: 2px solid #3182ce;
+    outline-offset: 2px;
 }
