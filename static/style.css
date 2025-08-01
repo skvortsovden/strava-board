@@ -328,21 +328,35 @@ blockquote {
     border-bottom: none;
 }
 
+.stats-table td:last-child {
+    text-align: right;
+    font-weight: 600;
+}
+
 /* Override right alignment for club description tables */
 .stats-table td.text-muted {
     text-align: left;
     font-weight: normal;
 }
 
-/* Center align stats values instead of right align */
-.stats-table td:last-child {
-    text-align: center;
-    font-weight: 600;
+/* Club list styling for my-clubs and my-ranks pages */
+.club-list-table {
+    margin-bottom: 2em;
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 0 2px 8px #0001;
 }
 
-/* Club list styling for my-clubs and my-ranks pages */
 .club-list-table td {
     padding: 16px 12px;
+    border-bottom: 1px solid #e4e2dd;
+    text-align: left;
+}
+
+.club-list-table tr:last-child td {
+    border-bottom: none;
 }
 
 .club-link {
