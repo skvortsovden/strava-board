@@ -152,7 +152,10 @@ class Activity:
 
     def detect_club_run(self) -> None:
         """Detect if this is a club run based on day and time"""
+        self.club_name = None
         run_date = self.start_date_local
+        if run_date is None:
+            return
         run_time = run_date.time()
 
         for club_name, config in CLUB_CONFIGS.items():

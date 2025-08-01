@@ -401,6 +401,76 @@ def club_leaderboard(club_slug):
         leaderboard_data=leaderboard_data_grouped
     )
 
+@app.route('/reprocess-clubs')
+@login_required
+def reprocess_clubs():
+    """Re-run club detection on all existing runs"""
+    try:
+        user_id = session.get('user_id')
+        runs = Run.query.filter_by(user_id=user_id).all()
+        
+        updated_count = 0
+        for run in runs:
+            # Create temporary activity to run detection
+            temp_activity = Activity(
+                id=int(run.strava_activity_id),
+                name=run.name,
+                distance=run.distance or 0,
+                moving_time=run.moving_time or 0,
+                elapsed_time=run.moving_time or 0,
+                total_elevation_gain=0,
+                type='Run',
+                start_date=run.start_date,
+                start_date_local=run.start_date_local,
+                timezone='UTC',
+                start_latlng=None,
+                end_latlng=None,
+                average_speed=0,
+                max_speed=0,
+                average_heartrate=None,
+                max_heartrate=None,
+                kudos_count=0,
+                athlete_count=0,
+                private=False,
+                resource_state=2,
+                athlete={},
+                sport_type='Run',
+                workout_type=None,
+                utc_offset=0,
+                location_city=None,
+                location_state=None,
+                location_country=None,
+                achievement_count=0,
+                comment_count=0,
+                photo_count=0,
+                map={},
+                trainer=False,
+                commute=False,
+                manual=False,
+                visibility='everyone',
+                flagged=False,
+                gear_id=None,
+                average_cadence=None,
+                average_watts=None,
+                max_watts=None,
+                weighted_average_watts=None,
+                club_name=None
+            )
+            
+            old_club = run.club_name
+            temp_activity.detect_club_run()
+            new_club = temp_activity.club_name
+            
+            if old_club != new_club:
+                run.club_name = new_club
+                updated_count += 1
+        
+        db.session.commit()
+        return f"Reprocessed {len(runs)} runs. Updated {updated_count} club assignments. <br><a href='/debug'>Check debug</a> | <a href='/'>Go home</a>"
+        
+    except Exception as e:
+        return f"Error reprocessing clubs: {str(e)}", 500
+
 @app.route('/debug-clubs')
 @login_required
 def debug_clubs():

@@ -10,9 +10,11 @@ STRAVA_REDIRECT_URI = os.environ.get('STRAVA_REDIRECT_URI', 'http://localhost:55
 
 CLUB_CONFIGS = {
     'Rotterdam': {
-        'days': [6],  # Sunday = 6 (Monday = 0)
-        'start_time': datetime.strptime('10:30', '%H:%M').time(),
-        'end_time': datetime.strptime('12:30', '%H:%M').time(),
+        'days': ['Sunday'],  # Day names
+        'time_window': {
+            'start': '10:00',  # Start a bit earlier to catch your 10:23 run
+            'end': '12:30'     # Keep the end time
+        },
         'city': 'Rotterdam'
     }
 }
