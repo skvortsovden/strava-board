@@ -22,6 +22,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
+# Create tables on startup
+with app.app_context():
+    db.create_all()
+
 
 # --- Utility Functions ---
 
@@ -192,58 +196,70 @@ def login():
 
 @app.route('/callback')
 def callback():
-    code = request.args.get('code')
-    if not code:
-        return "No code provided", 400
-    token_res = requests.post("https://www.strava.com/oauth/token", data={
-        'client_id': STRAVA_CLIENT_ID,
-        'client_secret': STRAVA_CLIENT_SECRET,
-        'code': code,
-        'grant_type': 'authorization_code'
-    })
-    if token_res.status_code != 200:
-        return "Token exchange failed", 400
-    data = token_res.json()
-    access_token = data['access_token']
-    refresh_token = data['refresh_token']
-    expires_at = datetime.utcfromtimestamp(data['expires_at'])
+    try:
+        code = request.args.get('code')
+        if not code:
+            return "No code provided", 400
+        
+        token_res = requests.post("https://www.strava.com/oauth/token", data={
+            'client_id': STRAVA_CLIENT_ID,
+            'client_secret': STRAVA_CLIENT_SECRET,
+            'code': code,
+            'grant_type': 'authorization_code'
+        })
+        if token_res.status_code != 200:
+            return f"Token exchange failed: {token_res.text}", 400
+        
+        data = token_res.json()
+        access_token = data['access_token']
+        refresh_token = data['refresh_token']
+        expires_at = datetime.utcfromtimestamp(data['expires_at'])
 
-    # Fetch user profile from Strava
-    profile_res = requests.get(
-        "https://www.strava.com/api/v3/athlete",
-        headers={'Authorization': f'Bearer {access_token}'}
-    )
-    if profile_res.status_code != 200:
-        return "Failed to fetch user profile", 400
-    profile = profile_res.json()
-    strava_id = str(profile['id'])
-    name = profile.get('firstname', '') + ' ' + profile.get('lastname', '')
-    profile_photo = profile.get('profile', '')  # Strava's profile photo URL
-
-    user = User.query.filter_by(strava_id=strava_id).first()
-    if not user:
-        user = User(
-            strava_id=strava_id,
-            name=name,
-            profile_photo=profile_photo,  # Save photo
-            access_token=access_token,
-            refresh_token=refresh_token,
-            token_expires_at=expires_at
+        # Fetch user profile from Strava
+        profile_res = requests.get(
+            "https://www.strava.com/api/v3/athlete",
+            headers={'Authorization': f'Bearer {access_token}'}
         )
-        db.session.add(user)
-    else:
-        user.name = name
-        user.profile_photo = profile_photo  # Update photo
-        user.access_token = access_token
-        user.refresh_token = refresh_token
-        user.token_expires_at = expires_at
-    db.session.commit()
+        if profile_res.status_code != 200:
+            return f"Failed to fetch user profile: {profile_res.text}", 400
+        
+        profile = profile_res.json()
+        strava_id = str(profile['id'])
+        name = profile.get('firstname', '') + ' ' + profile.get('lastname', '')
+        profile_photo = profile.get('profile', '')  # Strava's profile photo URL
 
-    session['access_token'] = access_token
-    session['user_id'] = user.id
+        user = User.query.filter_by(strava_id=strava_id).first()
+        if not user:
+            user = User(
+                strava_id=strava_id,
+                name=name,
+                profile_photo=profile_photo,  # Save photo
+                access_token=access_token,
+                refresh_token=refresh_token,
+                token_expires_at=expires_at
+            )
+            db.session.add(user)
+        else:
+            user.name = name
+            user.profile_photo = profile_photo  # Update photo
+            user.access_token = access_token
+            user.refresh_token = refresh_token
+            user.token_expires_at = expires_at
+        db.session.commit()
 
-    # Fetch all activities for the user (e.g., for the last 2 years)
-    after_date = get_after_date(get_current_year() - 1)
+        session['access_token'] = access_token
+        session['user_id'] = user.id
+
+        # Fetch all activities for the user (e.g., for the last 2 years)
+        after_date = get_after_date(get_current_year() - 1)
+        activities = fetch_activities(access_token, after_date)
+        if activities:
+            store_runs(user, activities)
+
+        return redirect('/')
+    
+    except Exception as e:
+        return f"Callback error: {str(e)}", 500
     activities = fetch_activities(access_token, after_date)
     if activities:
         store_runs(user, activities)
@@ -382,6 +398,16 @@ def club_leaderboard(club_slug):
         club_name=club_name,
         leaderboard_data=leaderboard_data_grouped
     )
+
+@app.route('/debug')
+def debug():
+    try:
+        # Test database connection
+        user_count = User.query.count()
+        run_count = Run.query.count()
+        return f"Database OK - Users: {user_count}, Runs: {run_count}"
+    except Exception as e:
+        return f"Database Error: {str(e)}", 500
 
 @app.template_filter('datetime')
 def format_datetime(value, fmt='%B %Y'):
