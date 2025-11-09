@@ -12,6 +12,13 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+  web:
+    image: ghcr.io/skvortsovden/strava-board:latest
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
 
 volumes:
   pgdata:
