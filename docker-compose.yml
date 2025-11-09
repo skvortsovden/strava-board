@@ -14,9 +14,13 @@ services:
       - pgdata:/var/lib/postgresql/data
   web:
     image: ghcr.io/skvortsovden/strava-board:latest
+    pull_policy: always
     restart: always
     environment:
       - PORT=8080
+      - STRAVA_REDIRECT_URI=https://berry.tailb7538f.ts.net/callback
+      - STRAVA_CLIENT_ID=${STRAVA_CLIENT_ID}
+      - STRAVA_CLIENT_SECRET=${STRAVA_CLIENT_SECRET}
     ports:
       - "8080:8080"
     depends_on:
