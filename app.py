@@ -824,6 +824,10 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Create tables if they don't exist
     host = os.environ.get('FLASK_RUN_HOST', '0.0.0.0')
-    port = int(os.environ.get('PORT', os.environ.get('FLASK_RUN_PORT', 5555)))
+    # Try PORT first (for platforms like Render), then FLASK_RUN_PORT, default to 5555
+    try:
+        port = int(os.environ.get('PORT', os.environ.get('FLASK_RUN_PORT', '5555')))
+    except (ValueError, TypeError):
+        port = 5555
     debug = os.environ.get('FLASK_DEBUG', 'False').lower() in ('1', 'true', 'yes')
     app.run(debug=debug, host=host, port=port)
