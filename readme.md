@@ -1,5 +1,6 @@
 # strava-board
 
+![Strava Board Screenshot](img/screenshot_001.png)
 
 
 ## Deployment
