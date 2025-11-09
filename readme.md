@@ -1,5 +1,8 @@
 # strava-board
 
+The app is currently deployed at:
+https://berry.tailb7538f.ts.net
+
 ![Strava Board Screenshot](img/screenshot_001.png)
 
 
