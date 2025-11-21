@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'README.md'
+      - 'readme.md'
+      - 'LICENSE'
 
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}:latest
