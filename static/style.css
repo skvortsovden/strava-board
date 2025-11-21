@@ -257,6 +257,27 @@ blockquote {
     background: #f6f6f6;
 }
 
+/* Navbar logo/icon styles */
+.navbar-icon {
+    margin-right: 0.5rem;
+}
+
+.navbar-logo {
+    height: 36px;
+    width: auto;
+    display: block;
+}
+
+.navbar-icon a {
+    padding: 0;
+    height: auto;
+    max-height: none;
+}
+
+.navbar-icon a:hover {
+    background: transparent;
+}
+
 .center-container {
     display: flex;
     justify-content: center;

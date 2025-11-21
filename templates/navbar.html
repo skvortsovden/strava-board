@@ -1,5 +1,10 @@
 <nav class="main-navbar">
     <ul>
+        <li class="navbar-icon">
+            <a href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='bih-board.png') }}" alt="BIH Board" class="navbar-logo">
+            </a>
+        </li>
         <li><a href="{{ url_for('index') }}">runs</a></li>
         <li><a href="{{ url_for('clubs') }}">clubs</a></li>
         <li><a href="{{ url_for('stats') }}">stats</a></li>

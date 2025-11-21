@@ -1,6 +1,6 @@
-# strava-board
+# bih-board
 
-Simple Strava dashboard for clubs and teams. Members authorize access to share and view activities and stats; authorized members can see each other’s activities. Designed for running clubs—runs are tagged as club activities when they match predefined criteria (location, date, and time range).
+Simple Strava dashboard for clubs and teams. Members authorize access to share and view activities and stats; authorized members can see each other's activities. Designed for running clubs—runs are tagged as club activities when they match predefined criteria (location, date, and time range).
 
 The app is currently deployed at:
 https://berry.tailb7538f.ts.net
@@ -22,10 +22,10 @@ export STRAVA_CLIENT_SECRET=your_strava_client_secret
 export STRAVA_REDIRECT_URI=https://yourdomain.com/callback
 ```
 
-To deploy the Strava Board application, follow these steps:
+To deploy the BIH Board application, follow these steps:
 1. Fetch the latest version of the Docker Compose file:
    ```bash
-   curl -o docker-compose.yml https://raw.githubusercontent.com/skvortsovden/strava-board/main/docker-compose.yml
+   curl -o docker-compose.yml https://raw.githubusercontent.com/skvortsovden/bih-board/main/docker-compose.yml
    ```
 2. Start the application using Docker Compose:
    ```bash

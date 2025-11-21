@@ -5,7 +5,7 @@ services:
     image: docker.io/library/postgres:15
     restart: always
     environment:
-      POSTGRES_DB: strava_board
+      POSTGRES_DB: bih_board
       POSTGRES_USER: strava
       POSTGRES_PASSWORD: strava_pass
     ports:
@@ -13,7 +13,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
   web:
-    image: ghcr.io/skvortsovden/strava-board:latest
+    image: ghcr.io/skvortsovden/bih-board:latest
     pull_policy: always
     restart: always
     environment:
