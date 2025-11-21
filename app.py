@@ -517,6 +517,19 @@ def calculate_longest_streak(runs):
     
     return longest_streak
 
+@app.route('/runner/<strava_id>')
+@login_required
+def runner_profile(strava_id):
+    """Display runner profile page"""
+    runner = User.query.filter_by(strava_id=strava_id).first()
+    if not runner:
+        return "Runner not found", 404
+    
+    return render_template(
+        'runner.html',
+        runner=runner
+    )
+
 @app.route('/<club_slug>/rank')
 @login_required
 def club_rank(club_slug):

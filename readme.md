@@ -1,5 +1,7 @@
 # strava-board
 
+Simple Strava dashboard for clubs and teams. Members authorize access to share and view activities and stats; authorized members can see each other’s activities. Designed for running clubs—runs are tagged as club activities when they match predefined criteria (location, date, and time range).
+
 The app is currently deployed at:
 https://berry.tailb7538f.ts.net
 

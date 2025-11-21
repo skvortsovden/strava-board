@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ runner.name }} - Runner Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include "navbar.html" %}
+    <div class="container">
+        <div class="runner-profile">
+            <img src="{{ runner.profile_photo }}" alt="{{ runner.name }}" class="runner-profile-photo">
+            <h1 class="runner-name">{{ runner.name }}</h1>
+            <a href="https://www.strava.com/athletes/{{ runner.strava_id }}" target="_blank" class="strava-link">
+                <img src="{{ url_for('static', filename='strava.svg') }}" alt="Strava" class="strava-icon">
+            Strava Profile
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -33,7 +33,7 @@
                                 <td class="font-mono">{{ loop.index }}</td>
                                 <td class="runner-cell">
                                     <img src="{{ row.runner.profile_photo }}" alt="Profile photo">
-                                    <span>{{ row.runner.name }}</span>
+                                    <a href="{{ url_for('runner_profile', strava_id=row.runner.strava_id) }}">{{ row.runner.name }}</a>
                                 </td>
                                 <td class="mobile-hide font-mono">{{ row.total_run_days }}</td>
                                 <td class="font-mono">{{ row.total_runs }}</td>
