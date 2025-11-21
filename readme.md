@@ -1,6 +1,15 @@
 # bih-board
 
-Simple Strava dashboard for clubs and teams. Members authorize access to share and view activities and stats; authorized members can see each other's activities. Designed for running clubs—runs are tagged as club activities when they match predefined criteria (location, date, and time range).
+<table>
+<tr>
+<td width="200">
+  <img src="static/bih-board.png" alt="BIH Board Logo" width="180">
+</td>
+<td>
+  bih-board is a simple Strava dashboard for clubs and teams. Members authorize access to share and view activities and stats; authorized members can see each other's activities. Designed for running clubs—runs are tagged as club activities when they match predefined criteria (location, date, and time range).
+</td>
+</tr>
+</table>
 
 The app is currently deployed at:
 https://berry.tailb7538f.ts.net
