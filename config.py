@@ -15,7 +15,9 @@ CLUB_CONFIGS = {
             'start': '10:00',  # Start a bit earlier to catch your 10:23 run
             'end': '12:30'     # Keep the end time
         },
-        'location': 'Rotterdam, Netherlands',
+        'location_city': 'Rotterdam',
+        'location_country': 'Netherlands',
+        'start_latlng': [51.9225, 4.47917],  # Approximate center of Rotterdam
         'description': 'Ukrainian Running Club in Rotterdam. We run & eat cakes every Sunday.'
     }
 }

@@ -13,8 +13,12 @@
         <h1>Ranks</h1>
         {% if club_config %}
         <p class="description">Name: {{ club_name }}<br>
-        {% if club_config.location %}
-            Location: {{ club_config.location }}<br>
+        {% if club_config.location_city %}
+            City: {{ club_config.location_city }}<br>
+        {% endif %}
+
+        {% if club_config.location_country %}
+            Country: {{ club_config.location_country }}<br>
         {% endif %}
         
         {% if club_config.days %}

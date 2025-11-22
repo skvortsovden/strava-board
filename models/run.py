@@ -42,22 +42,49 @@ class Run(db.Model):
         return f"{pace_minutes}:{pace_seconds:02d}"
 
     def detect_club_run(self):
-        """Detect if this is a club run based on day and time"""
+        """Detect if this is a club run based on day, time, city and country"""
         from config import CLUB_CONFIGS
+        import json
+        
         self.club_name = None
         run_date = self.start_date_local
         if run_date is None:
             return
+        
         run_time = run_date.time()
+        
+        # Parse raw_json to get location data
+        location_city = None
+        location_country = None
+        if self.raw_json:
+            try:
+                activity_data = json.loads(self.raw_json) if isinstance(self.raw_json, str) else self.raw_json
+                location_city = activity_data.get('location_city')
+                location_country = activity_data.get('location_country')
+            except (json.JSONDecodeError, AttributeError):
+                pass
+        
         for club_name, config in CLUB_CONFIGS.items():
             # Check if run is on configured day
-            if run_date.strftime('%A') in config['days']:
-                # Convert time window to time objects
-                from datetime import datetime
-                start_time = datetime.strptime(config['time_window']['start'], '%H:%M').time()
-                end_time = datetime.strptime(config['time_window']['end'], '%H:%M').time()
-                
-                # Check if run time is within window
-                if start_time <= run_time <= end_time:
-                    self.club_name = club_name
-                    break
+            if run_date.strftime('%A') not in config['days']:
+                continue
+            
+            # Check city if configured
+            if config.get('location_city') and location_city:
+                if config['location_city'].lower() != location_city.lower():
+                    continue
+            
+            # Check country if configured
+            if config.get('location_country') and location_country:
+                if config['location_country'].lower() != location_country.lower():
+                    continue
+            
+            # Convert time window to time objects
+            from datetime import datetime
+            start_time = datetime.strptime(config['time_window']['start'], '%H:%M').time()
+            end_time = datetime.strptime(config['time_window']['end'], '%H:%M').time()
+            
+            # Check if run time is within window
+            if start_time <= run_time <= end_time:
+                self.club_name = club_name
+                break

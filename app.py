@@ -356,8 +356,8 @@ def callback():
         session['access_token'] = access_token
         session['user_id'] = user.id
 
-        # Fetch all activities for the user (e.g., for the last 2 years)
-        after_date = get_after_date(get_current_year() - 1)
+        # Fetch all activities for the current year only
+        after_date = get_after_date(get_current_year())
         activities = fetch_activities(access_token, after_date)
         if activities:
             store_runs(user, activities)
@@ -679,8 +679,8 @@ def refresh_data():
         if not access_token:
             return "Failed to refresh access token. Please <a href='/login'>log in again</a>.", 400
         
-        # Fetch activities from Strava (last 2 years)
-        after_date = get_after_date(get_current_year() - 1)
+        # Fetch activities from Strava (current year only)
+        after_date = get_after_date(get_current_year())
         activities = fetch_activities(access_token, after_date)
         
         if not activities:
