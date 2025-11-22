@@ -4,20 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strava Board</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     {% if not authorized %}
         <div class="center-container">
             <div class="container">
+                <div class="login-logo">
+                    <img src="{{ url_for('static', filename='bih-board.png') }}" alt="BIH Board">
+                    <h1 class="login-title">bih-board</h1>
+                    <p class="login-description">"Твій біг, твоя борда"</p>
+                    <p class="login-description">"Your runs, your board"</p>
+                </div>
                 <a href="{{ url_for('login') }}" class="strava-btn">Connect with Strava</a>
             </div>
         </div>
     {% else %}
         {% include "navbar.html" %}
         <div class="container">
-            <h1>Your Runs</h1>
-        
+            <h1>Runs</h1>
+            <p class="description">Your recent runs from Strava</p>
             <div class="table-container">
                 <div class="table-responsive">
                     <table class="week-table">
@@ -55,7 +62,7 @@
                 </div>
             </div>
         </div>
+        {% include "footer.html" %}
     {% endif %}
-    {% include "footer.html" %}
 </body>
 </html>

@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranks</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
     {% include "navbar.html" %}
     <div class="container">
-        <h1>Your Club Ranks</h1>
+        <h1>Ranks</h1>
         {% if my_clubs %}
+            <p class="description">Choose a club to view your ranks</p>
             <div class="table-container">
                 <div class="table-responsive">
                     <table class="club-list-table">

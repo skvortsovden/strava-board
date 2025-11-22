@@ -610,10 +610,14 @@ def club_rank(club_slug):
     # Sort months reverse (latest first)
     rank_data_grouped.sort(key=lambda x: x['month'], reverse=True)
 
+    # Get club config for description
+    club_config = CLUB_CONFIGS.get(club_name, {})
+
     return render_template(
         'club-rank.html',
         club_name=club_name,
-        rank_data=rank_data_grouped
+        rank_data=rank_data_grouped,
+        club_config=club_config
     )
 
 @app.route('/reprocess-clubs')

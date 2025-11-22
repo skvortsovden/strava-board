@@ -31,6 +31,7 @@ img {
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Orbitron', serif;
     font-variant-numeric: lining-nums proportional-nums;
+    color: #2d6da3;
 }
 
 code {
@@ -59,25 +60,49 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Table styles */
+/* Table styles - Material Design */
 .week-table {
     margin-bottom: 2em;
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     background: #fff;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 8px #0001;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
 }
 
 .week-table th, .week-table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid #e4e2dd;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
     text-align: left;
 }
 
+.week-table thead {
+    background: #2d6da3;
+}
+
 .week-table th {
-    background-color: #f5f5f5;
+    color: #fff;
     font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: none;
+}
+
+.week-table th .material-icons {
+    font-size: 1.1em;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.week-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.week-table tbody tr:hover {
+    background-color: #f5f5f5;
 }
 
 .week-table tr:last-child td {
@@ -94,19 +119,84 @@ a:hover {
     display: inline-block;
     margin: 20px 0;
     padding: 10px 20px;
-    background-color: #2d6da3;
+    background: #265d95;
     color: white;
     text-decoration: none;
     font-weight: 600;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(45, 109, 163, 0.3), 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
 .back-link:hover {
-    background-color: #245a8a;
+    background: linear-gradient(135deg, #3a7fd6 0%, #4a8fe6 100%);
+    box-shadow: 0 4px 6px rgba(45, 109, 163, 0.4), 0 2px 3px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
 }
 
 .club-title {
     color: #2d6da3;
+}
+
+.club-info-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 20px 0 30px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    border-left: 4px solid #2d6da3;
+}
+
+.club-info-description {
+    font-size: 1.1em;
+    color: #333;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.club-info-description .material-icons {
+    color: #2d6da3;
+    font-size: 1.2em;
+    margin-top: 2px;
+}
+
+.club-info-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.club-info-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    color: #555;
+    font-size: 0.95em;
+}
+
+.club-info-item .material-icons {
+    font-size: 1.1em;
+    color: #2d6da3;
+}
+
+.club-info-item strong {
+    margin-right: 4px;
+}
+
+@media (max-width: 768px) {
+    .club-info-card {
+        padding: 16px;
+        margin: 16px 0 24px 0;
+    }
+    
+    .club-info-details {
+        flex-direction: column;
+        gap: 12px;
+    }
 }
 
 .club-description {
@@ -258,8 +348,15 @@ blockquote {
     max-height: 32px;
     display: flex;
     align-items: center;
+    gap: 0.4em;
     overflow: hidden;
 }
+
+.main-navbar a .material-icons {
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
 .main-navbar a:hover {
     background: #f6f6f6;
 }
@@ -292,8 +389,41 @@ blockquote {
     min-height: 60vh;
 }
 
+.center-container .container {
+    max-width: fit-content;
+}
+
+.login-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-logo img {
+    max-width: 250px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 1.5rem;
+}
+
+.login-title {
+    font-family: 'Orbitron', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #2d6da3;
+    margin: 0 0 1rem 0;
+    white-space: nowrap;
+}
+
+.login-description {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+    font-style: italic;
+    white-space: nowrap;
+}
+
 .strava-btn {
-    background: #2d6da3;
+    background: #265d95;
     color: #fff;
     font-family: 'Manrope', sans-serif;
     font-weight: 600;
@@ -303,15 +433,18 @@ blockquote {
     text-decoration: none;
     text-align: center;
     cursor: pointer;
-    transition: background 0.2s;
-    box-shadow: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(45, 109, 163, 0.3), 0 1px 3px rgba(0, 0, 0, 0.12);
     outline: none;
     letter-spacing: 0.5px;
+    border-radius: 4px;
 }
 
 .strava-btn:hover {
-    background: #3a7fd6;
+    background: linear-gradient(135deg, #3a7fd6 0%, #4a8fe6 100%);
     color: #fff;
+    box-shadow: 0 6px 8px rgba(45, 109, 163, 0.4), 0 2px 4px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
 }
 
 .refresh-section {
@@ -320,7 +453,7 @@ blockquote {
 }
 
 .refresh-btn {
-    background: #28a745;
+    background: linear-gradient(135deg, #28a745 0%, #34ce57 100%);
     color: #fff;
     font-family: 'Manrope', sans-serif;
     font-weight: 600;
@@ -331,30 +464,39 @@ blockquote {
     text-decoration: none;
     text-align: center;
     cursor: pointer;
-    transition: background 0.2s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3), 0 1px 2px rgba(0, 0, 0, 0.12);
     display: inline-block;
 }
 
 .refresh-btn:hover {
-    background: #218838;
+    background: linear-gradient(135deg, #34ce57 0%, #40de67 100%);
     color: #fff;
+    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.4), 0 2px 3px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
 }
 
-/* Stats page styles - matching existing table style */
+/* Stats page styles - Material Design */
 .stats-table {
     margin-bottom: 2em;
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     background: #fff;
     overflow: hidden;
-    box-shadow: 0 2px 8px #0001;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
 }
 
 .stats-table td {
-    padding: 10px 12px;
+    padding: 12px 16px;
     border-bottom: 1px solid #e4e2dd;
     text-align: left;
+}
+
+.stats-table tr:hover {
+    background-color: #f5f5f5;
+    transition: background-color 0.2s ease;
 }
 
 .stats-table tr:last-child td {
@@ -373,19 +515,27 @@ blockquote {
 }
 
 /* Club list styling for my-clubs and my-ranks pages */
+/* Club list styling for my-clubs and my-ranks pages - Material Design */
 .club-list-table {
     margin-bottom: 2em;
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     background: #fff;
     overflow: hidden;
-    box-shadow: 0 2px 8px #0001;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
 }
 
 .club-list-table td {
-    padding: 16px 12px;
+    padding: 16px 16px;
     border-bottom: 1px solid #e4e2dd;
     text-align: left;
+}
+
+.club-list-table tr:hover {
+    background-color: #f5f5f5;
+    transition: background-color 0.2s ease;
 }
 
 .club-list-table tr:last-child td {
@@ -597,13 +747,34 @@ blockquote {
         text-align: left;
     }
     
-    /* Ensure all club ranking table headers are left-aligned */
+    /* Ensure all club ranking table headers are left-aligned - Material Design */
+    .club-rank-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    }
+    
+    .club-rank-table thead {
+        background: #2d6da3;
+    }
+    
     .club-rank-table th {
         text-align: left;
         font-weight: 600;
-        padding: 10px 12px;
-        border-bottom: 2px solid #e4e2dd;
-        background-color: #f5f5f5;
+        padding: 12px 16px;
+        border-bottom: none;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.85em;
+    }
+    
+    .club-rank-table th .material-icons {
+        font-size: 1.1em;
+        vertical-align: middle;
+        margin-right: 4px;
     }
     
     /* All club ranking table cells left-aligned with consistent styling */
@@ -612,6 +783,17 @@ blockquote {
         font-family: 'Manrope', sans-serif;
         font-weight: 400;
         font-size: 0.95em;
+        padding: 12px 16px;
+        border-bottom: 1px solid #e4e2dd;
+    }
+    
+    .club-rank-table tbody tr:hover {
+        background-color: #f5f5f5;
+        transition: background-color 0.2s ease;
+    }
+    
+    .club-rank-table tbody tr:last-child td {
+        border-bottom: none;
     }
     
     /* Adjust runner cell for mobile */
@@ -730,6 +912,12 @@ blockquote {
     margin-bottom: 2rem;
     font-size: 1rem;
     line-height: 1.6;
+}
+
+.description {
+    color: #666;
+    margin: 10px 0 20px 0;
+    font-size: 16px;
 }
 
 .club-badge {
@@ -856,6 +1044,7 @@ blockquote {
     h1 {
         font-size: 1.75rem;
         margin-bottom: 1rem;
+        color: #2d6da3;
     }
     
     .main-navbar ul {

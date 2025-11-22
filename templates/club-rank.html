@@ -5,11 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ club_name }} Ranks</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
     {% include "navbar.html" %}
     <div class="container">
-        <h1 class="club-title">{{ club_name }} Ranks</h1>
+        <h1>Ranks</h1>
+        {% if club_config %}
+        <p class="description">Name: {{ club_name }}<br>
+        {% if club_config.location %}
+            Location: {{ club_config.location }}<br>
+        {% endif %}
+        
+        {% if club_config.days %}
+            Days: {{ club_config.days | join(', ') }}<br>
+        {% endif %}
+        
+        {% if club_config.time_window %}
+            Time: {{ club_config.time_window.start }} - {{ club_config.time_window.end }}
+        </p>
+        {% endif %}
+        {% endif %}
         
         {% for month_group in rank_data %}
             <div class="table-container">

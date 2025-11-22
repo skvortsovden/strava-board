@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stats - Strava Board</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
     {% if not authorized %}
@@ -16,7 +17,7 @@
     {% else %}
         {% include 'navbar.html' %}
         <div class="container">
-            <h1>Your Stats</h1>
+            <h1>Stats</h1>
             
             {% if not stats %}
                 <div class="no-data">
