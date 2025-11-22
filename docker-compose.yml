@@ -16,6 +16,8 @@ services:
     image: ghcr.io/skvortsovden/bih-board:latest
     pull_policy: always
     restart: always
+    labels:
+      io.containers.autoupdate: "registry"
     environment:
       - PORT=8080
       - STRAVA_REDIRECT_URI=https://berry.tailb7538f.ts.net/callback
