@@ -33,7 +33,7 @@
                                 <th>Date</th>
                                 <th>Name</th>
                                 <th>Time</th>
-                                <th>Dist</th>
+                                <th>Distance</th>
                                 <th>Pace</th>
                                 <th class="mobile-hide">Club</th>
                             </tr>
@@ -45,7 +45,7 @@
                                     <td>{{ run.start_date_local.strftime('%d/%m<br>%H:%M')|safe }}</td>
                                     <td>{{ run.name }}</td>
                                     <td>{{ run.format_duration() }}</td>
-                                    <td class="font-mono">{{ "%.1f"|format(run.distance/1000) }} km</td>
+                                    <td class="font-mono">{{ "%.1f"|format(run.distance/1000) }}</td>
                                     <td class="font-mono">{{ run.format_pace() }}</td>
                                     <td class="mobile-hide">
                                         {% if run.club_name %}

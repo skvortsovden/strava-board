@@ -638,6 +638,21 @@ blockquote {
         line-height: 1.2;
     }
     
+    /* Hide Material Icons in table headers on mobile to save space */
+    .week-table th .material-icons,
+    .club-rank-table th .material-icons,
+    .stats-table th .material-icons {
+        display: none;
+    }
+    
+    /* Make table headers more compact on mobile */
+    .week-table th,
+    .club-rank-table th {
+        font-size: 0.75em;
+        padding: 8px 2px;
+        white-space: nowrap;
+    }
+    
     /* Ensure very long run names wrap properly */
     .week-table td:nth-child(2) {
         max-width: 0; /* Force table-layout: fixed to work */
@@ -672,7 +687,11 @@ blockquote {
     .week-table th:nth-child(1),
     .week-table td:nth-child(1) { /* Date */
         width: 15%;
-        font-size: 0.9em;
+        font-size: 0.85em;
+    }
+    
+    .week-table th:nth-child(1) { /* Date header specifically */
+        font-size: 0.75em;
     }
     
     .week-table th:nth-child(2),
@@ -684,6 +703,7 @@ blockquote {
     .week-table td:nth-child(3) { /* Time */
         width: 15%;
         text-align: center;
+        white-space: nowrap;
     }
     
     .week-table th:nth-child(4),
@@ -696,6 +716,7 @@ blockquote {
     .week-table td:nth-child(5) { /* Pace */
         width: 16%;
         text-align: center;
+        white-space: nowrap;
     }
     
     /* Club page table column widths (4 columns visible on mobile) */
